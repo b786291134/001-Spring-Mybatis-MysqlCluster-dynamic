@@ -10,7 +10,6 @@ public class RunMethod {
     public static void main(String[] args) {
         ApplicationContext applicationContext=new ClassPathXmlApplicationContext("applicationContext.xml");
         SqlService sqlService= (SqlService) applicationContext.getBean("sqlServiceImpl");
-        System.out.println(sqlService);
         System.out.println("----------------------新增前--------------------------");
         System.out.println(sqlService.selectAll());
         User user=new User();

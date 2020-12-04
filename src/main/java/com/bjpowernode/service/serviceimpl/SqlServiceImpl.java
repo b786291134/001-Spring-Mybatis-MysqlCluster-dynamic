@@ -25,17 +25,16 @@ public class SqlServiceImpl implements SqlService {
     private UserMapper userMapper;
 
     public List<User> selectAll() {
+        //切换数据源为从库
         ThreadLocalConfig.setDataSource("slave");
         return userMapper.selectAll();
     }
 
     public int add(User user) {
+        //切换数据源为主库
         ThreadLocalConfig.setDataSource("master");
         return userMapper.insertSelective(user);
     }
 
-    @Override
-    public String toString() {
-        return "我是真的";
-    }
+
 }
