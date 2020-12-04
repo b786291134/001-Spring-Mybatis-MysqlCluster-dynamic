@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--配置主库3308的数据源 -->
+    <bean id="masterDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://192.168.59.129:3308/test?serverTimezone=UTC"/>
+        <property name="username" value="root"/>
+        <property name="password" value="y4j2c2b7"/>
+    </bean>
+    <!--配置从库3309的数据源 -->
+    <bean id="slaveDataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://192.168.59.129:3309/test?serverTimezone=UTC"/>
+        <property name="username" value="root"/>
+        <property name="password" value="y4j2c2b7"/>
+    </bean>
+    <!--定义自定义数据源的Bean -->
+    <bean id="myDataSource" class="com.bjpowernode.config.MyDataSource">
+        <!--配置默认数据源 -->
+        <property name="defaultTargetDataSource" ref="masterDataSource"/>
+        <!--配置所有需要动态切换的数据源参数为一个Map集合 -->
+        <property name="targetDataSources">
+            <map>
+                <entry key="master" value-ref="masterDataSource"/>
+                <entry key="slave" value-ref="slaveDataSource"/>
+            </map>
+        </property>
+    </bean>
+    <!--配置连接工厂 -->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="myDataSource"/>
+    </bean>
+    <!--配置包扫描 -->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean"/>
+        <property name="basePackage" value="com.bjpowernode.mapper"/>
+    </bean>
+</beans>
